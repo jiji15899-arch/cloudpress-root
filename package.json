@@ -1,0 +1,28 @@
+{
+  "name": "cloudpress",
+  "version": "1.0.0",
+  "description": "클라우드플레어 기반 워드프레스 호스팅",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --local",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "db:init": "node scripts/db-init.js",
+    "db:migrate": "wrangler d1 execute cloudpress-main --file=./migrations/001_init.sql",
+    "kv:create": "wrangler kv:namespace create KV",
+    "setup": "npm run kv:create && npm run db:migrate && node scripts/setup.js",
+    "tail": "wrangler tail",
+    "lint": "eslint worker/",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240208.0",
+    "@vitest/coverage-v8": "^1.3.0",
+    "eslint": "^8.56.0",
+    "vitest": "^1.3.0",
+    "wrangler": "^3.114.17"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
