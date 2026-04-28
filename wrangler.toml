@@ -1,0 +1,68 @@
+name = "cloudpress-main"
+main = "worker/index.js"
+compatibility_date = "2024-01-15"
+compatibility_flags = ["nodejs_compat"]
+
+# Worker configuration
+workers_dev = false
+route = { pattern = "app.cloud-press.app/*", zone_name = "cloud-press.app" }
+
+# Environment variables
+[vars]
+ADMIN_DOMAIN = "app.cloud-press.app"
+SUPERADMIN_DOMAIN = "admin.cloud-press.co.kr"
+ENVIRONMENT = "production"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "cloudpress-main"
+database_id = "YOUR_D1_DATABASE_ID"
+
+# KV Namespace binding
+[[kv_namespaces]]
+binding = "KV"
+id = "YOUR_KV_NAMESPACE_ID"
+preview_id = "YOUR_KV_PREVIEW_ID"
+
+# R2 Bucket (optional backup)
+# [[r2_buckets]]
+# binding = "R2"
+# bucket_name = "cloudpress-backup"
+
+# Service bindings (for PHP worker)
+# [[services]]
+# binding = "PHP_WORKER"
+# service = "cloudpress-php-runtime"
+
+# Additional routes for admin
+[[routes]]
+pattern = "admin.cloud-press.co.kr/*"
+zone_name = "cloud-press.co.kr"
+
+# Scheduled tasks
+[triggers]
+crons = ["0 * * * *"]  # Every hour
+
+# Build configuration
+[build]
+command = "npm run build"
+
+[build.upload]
+format = "modules"
+main = "./worker/index.js"
+
+# Development settings
+[dev]
+port = 8787
+local_protocol = "http"
+upstream_protocol = "https"
+
+# Production environment
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+# Staging environment
+[env.staging]
+vars = { ENVIRONMENT = "staging", ADMIN_DOMAIN = "app-staging.cloud-press.co.kr" }
+route = { pattern = "app-staging.cloud-press.co.kr/*", zone_name = "cloud-press.co.kr" }
